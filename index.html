@@ -7,7 +7,7 @@
   <meta name="description" content="Tattoo Dino La Raza – Individuelles Tattoostudio in Linden. Geführt von Dino, einem erfahrenen Tätowierer mit Leidenschaft für handwerkliche Qualität." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,12 +24,12 @@
       --green:  #25d366;
 
       /* TYPE SYSTEM — two faces, zero exceptions */
-      --serif: 'Cormorant Garamond', Georgia, serif;
+      --serif: 'Titan One', system-ui, sans-serif;
       --sans:  'Barlow', system-ui, sans-serif;
 
       /* Scale */
-      --t-hero:    clamp(4rem, 10vw, 8rem);
-      --t-h2:      clamp(2.4rem, 5vw, 4rem);
+      --t-hero:    clamp(2.8rem, 7.5vw, 5.5rem);
+      --t-h2:      clamp(1.8rem, 4vw, 3rem);
       --t-h3:      1.5rem;
       --t-body:    0.92rem;
       --t-small:   0.82rem;
@@ -58,38 +58,66 @@
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
 
-    /* ── NAV ── */
+    /* ── NAV — Split-Layout, Logo zentriert ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px; height: 72px;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 40px; height: 76px;
       background: rgba(6,6,6,0.95);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
     }
-    .nav-brand { display: flex; align-items: center; gap: 12px; }
-    .nav-brand img { height: 52px; width: auto; mix-blend-mode: screen; }
-    .nav-brand span {
-      font-family: var(--serif);
-      font-size: 1.2rem; font-weight: 400; font-style: italic;
-      letter-spacing: 0.06em;
-      color: var(--text);
-    }
-    .nav-links { display: flex; align-items: center; gap: 36px; }
-    .nav-links a {
+    .nav-side { display: flex; align-items: center; gap: 36px; }
+    .nav-side.left  { justify-content: flex-end; }
+    .nav-side.right { justify-content: flex-start; }
+    .nav-side a {
       font-family: var(--sans);
       font-size: var(--t-label); font-weight: 400;
       letter-spacing: var(--ls-nav); text-transform: uppercase;
       color: var(--muted); transition: color 0.25s;
     }
-    .nav-links a:hover { color: var(--text); }
+    .nav-side a:hover { color: var(--text); }
     .nav-cta {
       border: 1px solid var(--acc) !important;
       color: var(--acc) !important;
-      padding: 8px 20px; border-radius: 2px;
-      transition: background 0.2s !important;
+      padding: 8px 20px; border-radius: 8px;
+      transition: background 0.2s, box-shadow 0.2s !important;
     }
-    .nav-cta:hover { background: var(--acc-dim) !important; }
+    .nav-cta:hover { background: var(--acc-dim) !important; box-shadow: 0 0 18px rgba(192,39,45,0.35); }
+
+    .nav-logo-wrap {
+      position: relative; margin: 0 48px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; border-radius: 50%;
+    }
+    .nav-logo-wrap img {
+      height: 60px; width: auto;
+      mix-blend-mode: screen;
+    }
+    /* Shimmer — Lichtstreifen wandert diagonal übers Logo */
+    .nav-logo-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(115deg,
+        transparent 30%,
+        rgba(255,255,255,0.35) 48%,
+        rgba(255,255,255,0.6) 50%,
+        rgba(255,255,255,0.35) 52%,
+        transparent 70%);
+      transform: translateX(-120%);
+      animation: shimmer 4s ease-in-out infinite;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    @keyframes shimmer {
+      0%   { transform: translateX(-120%); }
+      35%  { transform: translateX(120%); }
+      100% { transform: translateX(120%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nav-logo-wrap::after { animation: none; }
+    }
 
     /* ── HERO ── */
     .hero {
@@ -103,7 +131,9 @@
     .hero::after {
       content: '';
       position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse 70% 55% at 50% 45%, rgba(192,39,45,0.05) 0%, transparent 70%);
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 40%, rgba(192,39,45,0.14) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 75%, rgba(192,39,45,0.07) 0%, transparent 65%);
     }
     .hero-eyebrow {
       font-family: var(--sans);
@@ -114,13 +144,17 @@
     .hero h1 {
       font-family: var(--serif);
       font-size: var(--t-hero);
-      font-weight: 400; font-style: italic;
-      line-height: 1.05; margin-bottom: 28px;
-      letter-spacing: -0.01em;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 1.02; margin-bottom: 28px;
+      letter-spacing: 0.01em;
       color: var(--text);
       text-wrap: balance;
     }
-    .hero h1 em { font-style: normal; color: var(--acc); }
+    .hero h1 em {
+      font-style: normal; color: var(--acc);
+      text-shadow: 0 0 32px rgba(192,39,45,0.55);
+    }
     .hero-sub {
       font-family: var(--sans);
       max-width: 440px; font-size: var(--t-body); font-weight: 300;
@@ -132,11 +166,15 @@
       display: inline-flex; align-items: center; gap: 9px;
       font-family: var(--sans); font-size: var(--t-label); font-weight: 500;
       letter-spacing: var(--ls-btn); text-transform: uppercase;
-      padding: 14px 32px; border-radius: 2px;
+      padding: 14px 32px; border-radius: 12px;
       transition: all 0.22s; cursor: pointer; border: none;
     }
-    .btn-gold { background: var(--acc); color: #fff; }
-    .btn-gold:hover { background: #a81f24; }
+    .btn-gold {
+      background: var(--acc); color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 24px rgba(192,39,45,0.4);
+    }
+    .btn-gold:hover { background: #d43038; box-shadow: 0 0 36px rgba(192,39,45,0.6); }
     .btn-outline { border: 1px solid var(--border); color: var(--muted); background: none; }
     .btn-outline:hover { border-color: var(--muted); color: var(--text); }
     .hero-scroll {
@@ -166,9 +204,10 @@
     .heading {
       font-family: var(--serif);
       font-size: var(--t-h2);
-      font-weight: 400; font-style: italic;
-      line-height: 1.08; margin-bottom: 18px;
-      letter-spacing: -0.01em;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 1.05; margin-bottom: 18px;
+      letter-spacing: 0.01em;
       text-wrap: balance;
     }
     .subtext {
@@ -186,7 +225,7 @@
     }
     .dino-photo {
       position: relative; aspect-ratio: 3/4;
-      background: var(--bg3); border-radius: 2px;
+      background: var(--bg3); border-radius: 12px;
       overflow: hidden; border: 1px solid var(--border);
     }
     .dino-photo-placeholder {
@@ -200,12 +239,12 @@
       font-size: var(--t-label); font-weight: 400;
       letter-spacing: var(--ls-nav); text-transform: uppercase;
       color: var(--muted); text-align: center;
-      border: 1px dashed var(--border); padding: 10px 20px; border-radius: 2px;
+      border: 1px dashed var(--border); padding: 10px 20px; border-radius: 12px;
     }
     .dino-tag {
       position: absolute; bottom: 20px; left: 20px;
       background: rgba(6,6,6,0.9); backdrop-filter: blur(8px);
-      border: 1px solid var(--border); padding: 10px 16px; border-radius: 2px;
+      border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px;
     }
     .dino-tag strong {
       display: block;
@@ -218,11 +257,12 @@
     }
     .dino-quote {
       font-family: var(--serif);
-      font-size: 1.7rem; font-style: italic; font-weight: 400;
-      line-height: 1.4; color: var(--text);
-      border-left: 1px solid var(--acc);
+      font-size: 1.4rem; font-weight: 400;
+      text-transform: uppercase;
+      line-height: 1.3; color: var(--text);
+      border-left: 3px solid var(--acc);
       padding-left: 24px; margin-bottom: 32px;
-      letter-spacing: 0;
+      letter-spacing: 0.01em;
     }
     .dino-bio {
       font-family: var(--sans);
@@ -233,14 +273,15 @@
     .dino-facts {
       display: grid; grid-template-columns: repeat(3, 1fr);
       gap: 1px; background: var(--border);
-      border: 1px solid var(--border); border-radius: 2px;
+      border: 1px solid var(--border); border-radius: 12px;
       overflow: hidden; margin-bottom: 36px;
     }
     .fact { background: var(--bg3); padding: 20px 18px; }
     .fact-num {
       font-family: var(--serif);
-      font-size: 2.2rem; font-weight: 400; font-style: italic;
+      font-size: 1.9rem; font-weight: 400;
       color: var(--acc); line-height: 1;
+      text-shadow: 0 0 20px rgba(192,39,45,0.4);
     }
     .fact-label {
       font-family: var(--sans);
@@ -254,7 +295,7 @@
       font-size: var(--t-label); font-weight: 400;
       letter-spacing: var(--ls-nav); text-transform: uppercase;
       color: var(--muted); border: 1px solid var(--border);
-      padding: 5px 14px; border-radius: 2px;
+      padding: 5px 14px; border-radius: 12px;
       transition: border-color 0.2s, color 0.2s;
     }
     .specialty:hover { border-color: var(--acc); color: var(--acc); }
@@ -274,10 +315,10 @@
     .carousel-item {
       flex: 0 0 320px; scroll-snap-align: start;
       aspect-ratio: 3/4; background: var(--bg2);
-      border: 1px solid var(--border); border-radius: 2px;
+      border: 1px solid var(--border); border-radius: 12px;
       overflow: hidden; position: relative; transition: border-color 0.2s;
     }
-    .carousel-item:hover { border-color: var(--acc); }
+    .carousel-item:hover { border-color: var(--acc); box-shadow: 0 0 28px rgba(192,39,45,0.25); }
     .carousel-item img { width: 100%; height: 100%; object-fit: cover; }
     .carousel-placeholder {
       width: 100%; height: 100%;
@@ -314,7 +355,7 @@
     .services-grid {
       display: grid; grid-template-columns: repeat(3, 1fr);
       gap: 1px; background: var(--border);
-      border: 1px solid var(--border); border-radius: 2px;
+      border: 1px solid var(--border); border-radius: 12px;
       overflow: hidden; margin-top: 52px;
     }
     .svc { background: var(--bg2); padding: 36px 28px; transition: background 0.2s; }
@@ -326,8 +367,10 @@
     }
     .svc h3 {
       font-family: var(--serif);
-      font-size: var(--t-h3); font-style: italic; font-weight: 400;
+      font-size: 1.15rem; font-weight: 400;
+      text-transform: uppercase;
       margin-bottom: 10px; color: var(--text); line-height: 1.2;
+      letter-spacing: 0.02em;
     }
     .svc p {
       font-family: var(--sans);
@@ -351,8 +394,9 @@
     .proc-step:last-child::after { display: none; }
     .proc-num {
       font-family: var(--serif);
-      font-size: 3.5rem; font-weight: 400; font-style: italic;
-      color: var(--border); line-height: 1; margin-bottom: 18px;
+      font-size: 2.8rem; font-weight: 400;
+      color: var(--acc-dim); -webkit-text-stroke: 1px rgba(192,39,45,0.4);
+      line-height: 1; margin-bottom: 18px;
     }
     .proc-step h4 {
       font-family: var(--sans);
@@ -378,7 +422,7 @@
     .funnel-perks li::before { content: '—'; color: var(--acc); flex-shrink: 0; margin-top: 2px; }
     .form-card {
       background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 2px; padding: 40px 36px;
+      border-radius: 12px; padding: 40px 36px;
     }
     .form-card .heading { font-size: 2rem; margin-bottom: 6px; }
     .form-card .form-sub {
@@ -396,7 +440,7 @@
     .form-group select,
     .form-group textarea {
       width: 100%; background: var(--bg2);
-      border: 1px solid var(--border); border-radius: 2px;
+      border: 1px solid var(--border); border-radius: 12px;
       padding: 11px 14px;
       font-family: var(--sans); font-size: var(--t-body); font-weight: 300;
       color: var(--text); outline: none;
@@ -416,7 +460,7 @@
       background: var(--green); color: #fff;
       font-family: var(--sans); font-size: var(--t-label); font-weight: 500;
       letter-spacing: var(--ls-btn); text-transform: uppercase;
-      padding: 15px; border-radius: 2px; border: none; cursor: pointer;
+      padding: 15px; border-radius: 12px; border: none; cursor: pointer;
       margin-top: 8px; transition: filter 0.2s;
     }
     .btn-wa:hover { filter: brightness(1.1); }
@@ -430,12 +474,12 @@
     .reviews { background: var(--bg); }
     .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 52px; }
     .review-card {
-      border: 1px solid var(--border); border-radius: 2px;
+      border: 1px solid var(--border); border-radius: 12px;
       padding: 32px; position: relative;
     }
     .review-card::before {
       content: '"'; font-family: var(--serif);
-      font-size: 6rem; font-style: italic; line-height: 1;
+      font-size: 5rem; line-height: 1;
       color: var(--border); position: absolute; top: 10px; left: 20px;
     }
     .review-stars { color: var(--acc); font-size: 0.7rem; margin-bottom: 16px; letter-spacing: 0.1em; }
@@ -537,8 +581,9 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
-      nav { padding: 0 20px; }
-      .nav-links { display: none; }
+      nav { padding: 0 20px; grid-template-columns: 1fr; justify-items: center; }
+      .nav-side { display: none; }
+      .nav-logo-wrap { margin: 0; }
       .dino-inner, .funnel-inner { grid-template-columns: 1fr; gap: 48px; }
       .services-grid, .reviews-grid { grid-template-columns: 1fr; }
       .process-grid { grid-template-columns: 1fr 1fr; }
@@ -560,15 +605,16 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-brand">
-    <img src="logo.png" alt="Tattoo Dino La Raza" />
-    <span>Tattoo Dino La Raza</span>
-  </a>
-  <div class="nav-links">
+  <div class="nav-side left">
     <a href="#dino">Über Dino</a>
     <a href="#gallery">Arbeiten</a>
+  </div>
+  <a href="#" class="nav-logo-wrap">
+    <img src="logo.png" alt="Tattoo Dino La Raza" />
+  </a>
+  <div class="nav-side right">
     <a href="#services">Stile</a>
-    <a href="#termin" class="nav-cta">Termin anfragen</a>
+    <a href="#termin" class="nav-cta">Termin</a>
   </div>
 </nav>
 
