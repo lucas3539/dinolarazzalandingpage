@@ -135,6 +135,13 @@
         radial-gradient(ellipse 70% 55% at 50% 40%, rgba(192,39,45,0.14) 0%, transparent 70%),
         radial-gradient(ellipse 40% 30% at 80% 75%, rgba(192,39,45,0.07) 0%, transparent 65%);
     }
+    .hero-logo {
+      height: clamp(120px, 18vw, 190px); width: auto;
+      mix-blend-mode: screen;
+      margin-bottom: 28px;
+      position: relative; z-index: 1;
+      filter: drop-shadow(0 0 32px rgba(192,39,45,0.35));
+    }
     .hero-eyebrow {
       font-family: var(--sans);
       font-size: var(--t-label); font-weight: 400;
@@ -478,15 +485,16 @@
       padding: 32px; position: relative;
     }
     .review-card::before {
-      content: '"'; font-family: var(--serif);
-      font-size: 5rem; line-height: 1;
-      color: var(--border); position: absolute; top: 10px; left: 20px;
+      content: '„'; font-family: var(--serif);
+      font-size: 3rem; line-height: 1;
+      color: var(--acc-dim); position: absolute; top: 18px; right: 24px;
+      pointer-events: none;
     }
     .review-stars { color: var(--acc); font-size: 0.7rem; margin-bottom: 16px; letter-spacing: 0.1em; }
     .review-text {
       font-family: var(--sans); font-size: var(--t-body); font-weight: 300;
       color: var(--muted); line-height: 1.8; letter-spacing: var(--ls-body);
-      margin-bottom: 22px; padding-top: 14px;
+      margin-bottom: 22px;
     }
     .review-author { display: flex; align-items: center; gap: 12px; }
     .review-avatar {
@@ -620,6 +628,7 @@
 
 <!-- HERO -->
 <section class="hero">
+  <img src="logo.png" alt="Tattoo Dino La Raza" class="hero-logo" />
   <p class="hero-eyebrow">Tattoostudio · Linden · Hannover</p>
   <h1>Haut, die<br /><em>Geschichten</em><br />erzählt.</h1>
   <p class="hero-sub">Jedes Tattoo ist ein Unikat. Dino arbeitet ausschließlich nach Vereinbarung — persönlich, ohne Kompromisse.</p>
@@ -652,7 +661,7 @@
       <div class="dino-text">
         <span class="label">Der Künstler dahinter</span>
         <blockquote class="dino-quote">
-          „Ich tätowiere keine Motive.<br />Ich tätowiere Momente."
+          „Ich tätowiere keine Motive.<br />Ich tätowiere Momente.“
         </blockquote>
         <p class="dino-bio">
           Dino führt sein Studio in Linden seit Jahren in Eigenregie — bewusst klein, bewusst persönlich. Kein Teamwirrwarr, keine Warteschlangen. Wer zu ihm kommt, arbeitet direkt mit dem Menschen, der den Stich setzt.<br /><br />
