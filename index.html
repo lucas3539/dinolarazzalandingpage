@@ -1026,26 +1026,56 @@
     window.open(`https://wa.me/${WA}?text=${encodeURIComponent(lines)}`, '_blank');
   });
 
-  /* ── Carousel drag & buttons ── */
+  /* ── Carousel: Endlos-Loop (Clone-Technik) ── */
   const carousel = document.getElementById('carousel');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Schrittweite dynamisch: echte Kachelbreite + 16px Lücke (Desktop 320, Mobil 260)
+  const STEP = () => carousel.querySelector('.carousel-item').offsetWidth + 16;
+
+  // Originale klonen: Kopien aller Items vorne UND hinten anhängen.
+  // Springt der Scroll in eine Klon-Zone, wird unsichtbar zur Mitte teleportiert.
+  const originals = Array.from(carousel.children);
+  const setWidth = () => originals.length * STEP();
+  originals.forEach(item => carousel.appendChild(item.cloneNode(true)));
+  originals.slice().reverse().forEach(item => carousel.insertBefore(item.cloneNode(true), carousel.firstChild));
+  carousel.scrollLeft = setWidth(); // Start: mittlerer (originaler) Block
+
+  let teleporting = false;
+  function keepInLoop() {
+    if (teleporting) return;
+    const w = setWidth();
+    if (carousel.scrollLeft < w * 0.5) {
+      teleporting = true;
+      carousel.scrollLeft += w;
+      requestAnimationFrame(() => { teleporting = false; });
+    } else if (carousel.scrollLeft > w * 1.5) {
+      teleporting = true;
+      carousel.scrollLeft -= w;
+      requestAnimationFrame(() => { teleporting = false; });
+    }
+  }
+  carousel.addEventListener('scroll', keepInLoop, { passive: true });
+
+  /* ── Drag mit Maus ── */
   let isDown = false, startX, scrollLeft;
   carousel.addEventListener('mousedown', e => {
     isDown = true; carousel.classList.add('grabbing');
     startX = e.pageX - carousel.offsetLeft;
     scrollLeft = carousel.scrollLeft;
   });
-  carousel.addEventListener('mouseleave', () => { isDown = false; carousel.classList.remove('grabbing'); });
-  carousel.addEventListener('mouseup',    () => { isDown = false; carousel.classList.remove('grabbing'); });
+  carousel.addEventListener('mouseup', () => { isDown = false; carousel.classList.remove('grabbing'); });
   carousel.addEventListener('mousemove', e => {
     if (!isDown) return;
     e.preventDefault();
     carousel.scrollLeft = scrollLeft - (e.pageX - carousel.offsetLeft - startX) * 1.4;
   });
+
+  /* ── Pfeil-Buttons ── */
   document.getElementById('prev').addEventListener('click', () => {
-    carousel.scrollBy({ left: -360, behavior: 'smooth' });
+    carousel.scrollBy({ left: -STEP(), behavior: 'smooth' });
   });
   document.getElementById('next').addEventListener('click', () => {
-    carousel.scrollBy({ left: 360, behavior: 'smooth' });
+    carousel.scrollBy({ left: STEP(), behavior: 'smooth' });
   });
 
   /* ── Touch swipe ── */
@@ -1053,8 +1083,34 @@
   carousel.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
   carousel.addEventListener('touchend', e => {
     const diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) carousel.scrollBy({ left: diff * 2, behavior: 'smooth' });
+    if (Math.abs(diff) > 40) carousel.scrollBy({ left: diff > 0 ? STEP() : -STEP(), behavior: 'smooth' });
   }, {passive:true});
+
+  /* ── Auto-Weiterblättern ── */
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  let autoTimer = null;
+
+  function startAuto(interval) {
+    if (reducedMotion || autoTimer) return;
+    autoTimer = setInterval(() => {
+      if (!isDown) carousel.scrollBy({ left: STEP(), behavior: 'smooth' });
+    }, interval);
+  }
+  function stopAuto() {
+    clearInterval(autoTimer);
+    autoTimer = null;
+  }
+
+  if (canHover) {
+    // Desktop: läuft nur solange die Maus über dem Karussell ist
+    carousel.addEventListener('mouseenter', () => startAuto(1800));
+    carousel.addEventListener('mouseleave', () => { isDown = false; carousel.classList.remove('grabbing'); stopAuto(); });
+  } else {
+    // Touch-Geräte: läuft dauerhaft langsam, pausiert beim Anfassen
+    startAuto(3200);
+    carousel.addEventListener('touchstart', stopAuto, {passive:true});
+    carousel.addEventListener('touchend', () => setTimeout(() => startAuto(3200), 2500), {passive:true});
+  }
 
   /* ── FAQ ── */
   document.querySelectorAll('.faq-q').forEach(btn => {
